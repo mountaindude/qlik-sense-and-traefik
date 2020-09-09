@@ -1,0 +1,25 @@
+---
+global:
+    checkNewVersion: true
+    sendAnonymousUsage: false
+
+log:
+    level: INFO
+    filepath: C:\tool\traefik\log\traefik.log
+
+api:
+    dashboard: true
+    insecure: false
+    debug: true
+
+entryPoints:
+    web:
+        address: ':80'
+
+    websecure:
+        address: ':443'
+
+providers:
+    file:
+        watch: true
+        directory: C:\tool\traefik\config_dynamic

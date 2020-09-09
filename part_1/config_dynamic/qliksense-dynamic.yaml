@@ -1,0 +1,33 @@
+---
+http:
+    routers:
+        qliksense-http:
+            rule: Host(`qliksense.ptarmiganlabs.net`)
+            entrypoints: web
+            middlewares:
+                - qliksense-https-redirect
+            service: qliksenseService
+        qliksense-https:
+            rule: Host(`qliksense.ptarmiganlabs.net`)
+            entrypoints: websecure
+            service: qliksenseService
+            middlewares:
+                - sslHeader
+            tls:
+                passthrough: false
+    middlewares:
+        qliksense-https-redirect:
+            redirectScheme:
+                scheme: https
+                permanent: true
+        sslHeader:
+            headers:
+                # Needed in order to make websockets (which are heavily used by the Sense client) work over https
+                customRequestHeaders:
+                    X-Forwarded-Proto: https
+    services:
+        qliksenseService:
+            loadBalancer:
+                servers:
+                    # Note that Qlik Sense should be configured to expose http on port 8088, in this example.
+                    - url: 'http://192.168.100.110:8088'

@@ -1,0 +1,8 @@
+---
+tls:
+    stores:
+        default:
+            defaultCertificate:
+                # Replace these certificates with your own
+                certFile: cert/your-cert.cer
+                keyFile: cert/your-cert.key

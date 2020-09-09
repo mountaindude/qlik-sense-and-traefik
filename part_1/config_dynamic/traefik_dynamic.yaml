@@ -1,0 +1,26 @@
+---
+http:
+    routers:
+        traefik-http:
+            rule: Host(`traefik.ptarmiganlabs.net`)
+            entrypoints: web
+            service: api@internal
+            middlewares:
+                - traefik-https-redirect
+                - traefikAuth
+        traefik-https:
+            rule: Host(`traefik.ptarmiganlabs.net`)
+            entrypoints: websecure
+            tls: {}
+            service: api@internal
+            middlewares:
+                - traefikAuth
+    middlewares:
+        traefik-https-redirect:
+            redirectScheme:
+                scheme: https
+                permanent: true
+        traefikAuth:
+            basicAuth:
+                users:
+                    - 'admin:$apr1$c5IwaNCW$VpEXax7LtUneLsElXFWCI.'
