@@ -1,0 +1,41 @@
+---
+global:
+    checkNewVersion: true
+    sendAnonymousUsage: false
+
+log:
+    level: INFO
+    filepath: C:\tool\traefik\log\traefik.log
+
+api:
+    dashboard: true
+    insecure: false
+    debug: true
+
+entryPoints:
+    web:
+        address: ':80'
+
+    websecure:
+        address: ':443'
+
+providers:
+    file:
+        watch: true
+        directory: C:\tool\traefik\config_dynamic
+
+certificatesResolvers:
+    myDnsChallengeResolver:
+        acme:
+            email: goran@ptarmiganlabs.com # Change this to your own email address
+            storage: acme.json # File where certificates, metadata etc will be stored
+            # caserver: https://acme-staging-v02.api.letsencrypt.org/directory
+            # If commented out, the Let's Enrypt PROD server is used. I thas rate limits and will
+            # block us if we do too many requests in a short time.
+            # During development their staging server should be used => Uncomment the caserver line
+            dnschallenge: # We're doing a DNS challenge to prove who we are to Let's Encrypt
+                provider: digitalocean # We're doing the DNS Challenge via DigitalOcean's DNS
+                # resolvers: 8.8.8.8:53             # This is Google's standard DNS, but it might take (a long)
+                # time until the DNS challenge reaches it
+                resolvers: ns1.digitalocean.com:53 # .. so I use DigitalOcean's own DNS instead. Much faster in this specific case.
+                delayBeforeCheck: 10 # Give the DNS some time to settle before it is queried

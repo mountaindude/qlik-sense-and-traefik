@@ -1,0 +1,51 @@
+---
+http:
+    routers:
+        qliksenseProd-http:
+            rule: Host(`qliksense.ptarmiganlabs.net`)
+            entrypoints: web
+            middlewares:
+                - qliksense-https-redirect
+            service: qliksenseProdService
+        qliksenseProd-https:
+            rule: Host(`qliksense.ptarmiganlabs.net`)
+            entrypoints: websecure
+            service: qliksenseProdService
+            middlewares:
+                - sslHeader
+            tls:
+                certResolver: myDnsChallengeResolver
+
+        qliksenseDev-http:
+            rule: Host(`qliksensedev.ptarmiganlabs.net`)
+            entrypoints: web
+            middlewares:
+                - qliksense-https-redirect
+            service: qliksenseDevService
+        qliksenseDev-https:
+            rule: Host(`qliksensedev.ptarmiganlabs.net`)
+            entrypoints: websecure
+            service: qliksenseDevService
+            middlewares:
+                - sslHeader
+            tls:
+                certResolver: myDnsChallengeResolver
+
+    middlewares:
+        qliksense-https-redirect:
+            redirectScheme:
+                scheme: https
+                permanent: true
+        sslHeader:
+            headers:
+                customRequestHeaders:
+                    X-Forwarded-Proto: https
+    services:
+        qliksenseProdService:
+            loadBalancer:
+                servers:
+                    - url: 'http://192.168.100.112:8088'
+        qliksenseDevService:
+            loadBalancer:
+                servers:
+                    - url: 'http://192.168.100.110:8088'
